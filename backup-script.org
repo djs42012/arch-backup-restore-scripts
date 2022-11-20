@@ -37,186 +37,30 @@ Optionally copied from [[* profile][/etc/profile]]
 ** var/
 * Getting a List of Packages
 ** List Explicitly Installed Packages from Pacman
-#+begin_src sh :results packages
- pacman -Qqen
+#+begin_src sh :results packages file :file pacman-packages.txt :tangle backup.sh
+pacman -Qqen
 #+end_src
+
 #+RESULTS:
-| acpi                         |
-| alacritty                    |
-| alsa-plugins                 |
-| alsa-utils                   |
-| amd-ucode                    |
-| arc-icon-theme               |
-| archlinux-keyring            |
-| audacity                     |
-| autoconf                     |
-| automake                     |
-| awesome                      |
-| base                         |
-| binutils                     |
-| bison                        |
-| btrfs-progs                  |
-| cmake                        |
-| cups                         |
-| cups-pdf                     |
-| debugedit                    |
-| discord                      |
-| efibootmgr                   |
-| emacs-nativecomp             |
-| fakeroot                     |
-| fd                           |
-| file                         |
-| file-roller                  |
-| findutils                    |
-| firefox                      |
-| fish                         |
-| fisher                       |
-| flex                         |
-| fontforge                    |
-| gawk                         |
-| gcc                          |
-| gettext                      |
-| git                          |
-| gnome-keyring                |
-| gnome-terminal               |
-| goimapnotify                 |
-| grep                         |
-| groff                        |
-| gst-plugin-pipewire          |
-| gucharmap                    |
-| gvfs                         |
-| gzip                         |
-| hplip                        |
-| htop                         |
-| ispell                       |
-| isync                        |
-| iwd                          |
-| kitty                        |
-| libpulse                     |
-| libretro-core-info           |
-| libtool                      |
-| libva-mesa-driver            |
-| light                        |
-| lightdm                      |
-| lightdm-gtk-greeter          |
-| lightdm-slick-greeter        |
-| linux                        |
-| linux-firmware               |
-| m4                           |
-| make                         |
-| man-db                       |
-| meson                        |
-| mlocate                      |
-| nano                         |
-| neofetch                     |
-| network-manager-applet       |
-| networkmanager               |
-| nitrogen                     |
-| nomacs                       |
-| noto-fonts-emoji             |
-| offlineimap                  |
-| pacman                       |
-| patch                        |
-| pavucontrol                  |
-| picom                        |
-| pipewire                     |
-| pipewire-alsa                |
-| pipewire-jack                |
-| pkgconf                      |
-| pulseaudio                   |
-| pulseaudio-bluetooth         |
-| pulseaudio-jack              |
-| python-six                   |
-| retroarch                    |
-| ripgrep                      |
-| rofi                         |
-| rsync                        |
-| scrot                        |
-| sed                          |
-| signal-desktop               |
-| slock                        |
-| smartmontools                |
-| sudo                         |
-| syncthing                    |
-| terminus-font                |
-| texinfo                      |
-| texlive-bibtexextra          |
-| texlive-core                 |
-| texlive-fontsextra           |
-| texlive-formatsextra         |
-| texlive-games                |
-| texlive-humanities           |
-| texlive-latexextra           |
-| texlive-music                |
-| texlive-pictures             |
-| texlive-pstricks             |
-| texlive-publishers           |
-| texlive-science              |
-| thunar                       |
-| ttf-liberation               |
-| tumbler                      |
-| unicode-emoji                |
-| vim                          |
-| virtualbox                   |
-| virtualbox-host-modules-arch |
-| vlc                          |
-| vulkan-radeon                |
-| wget                         |
-| which                        |
-| wine-staging                 |
-| winetricks                   |
-| wireless_tools               |
-| wireplumber                  |
-| wmctrl                       |
-| xdg-utils                    |
-| xdotool                      |
-| xf86-input-synaptics         |
-| xf86-video-amdgpu            |
-| xf86-video-ati               |
-| xorg-font-util               |
-| xorg-mkfontscale             |
-| xorg-xev                     |
-| xorg-xinit                   |
-| xorg-xinput                  |
-| xsel                         |
-| zram-generator               |
+[[file:pacman-packages.txt]]
+
 ** List Explicitly Installed AUR Packages
-#+begin_src sh :results aur-packages
+#+begin_src sh :results aur-packages file :file aur-packages.txt :tangle backup.sh
+
 pacman -Qqem
 #+end_src
+
 #+RESULTS:
-| adeos-oblogout-git               |
-| adobe-reader-11                  |
-| autojump                         |
-| brave-bin                        |
-| cyrus-sasl-xoauth2-git           |
-| dracula-cursors-git              |
-| dracula-gtk-theme                |
-| dracula-icons-git                |
-| gpointing-device-settings        |
-| libinput-gestures                |
-| lightdm-settings                 |
-| masterpdfeditor                  |
-| mu                               |
-| nvm                              |
-| oauth2ms-git                     |
-| oauth2token                      |
-| oblogout                         |
-| protonmail-bridge                |
-| protonmail-import-export-app-bin |
-| python-grip                      |
-| rofi-file-browser-extended-git   |
-| snapper-gui-git                  |
-| spotify                          |
-| starship-git                     |
-| themix-full-git                  |
-| ttf-twemoji                      |
-| tty-clock-git                    |
-| yay-git                          |
-| zoom                             |
-| zotero-bin                       |
+[[file:aur-packages.txt]]
+
 ** Install Yay
 Install ~yay~ using the command from the [[https://github.com/Jguer/yay][repository's homepage]]
 #+begin_src sh
 pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si
 #+end_src
+
+#+RESULTS:
+
+# Local Variables:
+# eval: (flyspell-mode -1)
+# End:
