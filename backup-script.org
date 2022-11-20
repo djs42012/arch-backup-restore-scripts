@@ -19,11 +19,17 @@ Xorg configuration files (for more info see [[https://www.x.org/releases/current
 ***** 30-touchpad.conf
 *** oblogout.conf
 + TODO check if we can move this to ~/.config
+*** cups/
+Copy entire directory (see [[* Backing up cups][Backing up cups]])
+*** pacman.conf
+Copy the single file (see [[* Backing up pacman][Backing up pacman]] )
 ** ~/
 *** .xinitrc
 Optionally copied from [[* xinitrc][/etc/X11/xinitrc]]
 *** .xprofile
 Optionally copied from [[* profile][/etc/profile]]
+*** pacman.conf
+Copy the single configuration file (see [[* pacman.conf][Backing up pacman.conf]])
 ** TODO lib -> usr/lib/
 ** TODO lib64 -> usr/lib/
 ** TODO mnt/
@@ -64,6 +70,17 @@ BACKUPPATH=$BACKUPDEST/$USER-backup/
 #+end_src
 
 ** Backup Home Folder
+**** Backing up cups
+#+begin_src sh :eval never :tangle backup.sh
+sudo cp -r /etc/cups $BACKUPPATH/root/etc/
+#+end_src
+**** Backing up pacman
+#+begin_src sh
+sudo cp /etc/pacman.conf $BACKUPPATH/root/etc/
+#+end_src
+
+
+
 
 * Restoring
 ** Restore Packages
