@@ -24,6 +24,20 @@ Copy entire directory (see [[* Backing up cups][Backing up cups]])
 *** pacman.conf
 Copy the single file (see [[* Backing up pacman][Backing up pacman]] )
 ** ~/
+*** fonts/
+For a specific listing of what we choose to back up see [[* Backing up Font Configuration][Backing up Font Configuration]]
+**** conf.avail/
+Copy over  specific font preferences in case we ever need them
+**** conf.d/
+Symlink the desired entries from ~/usr/share/fontconfig/conf.avail~
+**** fonts.conf
+We don't ever touch this file as it's automatically regenrated each time we run ~fc-cache -fv~
+**** local.conf
+This contains our system wide font preferences, and can be overridden on a per user basis by making corresponding file entries in ~$HOME/.config/fontconfig/conf.d/~ and in ~$HOME/.config/fontconfig/fonts.conf~. For more info, see the article on font configuration in the [[https://wiki.archlinux.org/title/font_configuration][arch wiki]]. Currently, I have no need for per user customizations.
+** usr/
+*** share/
+**** fontconfig/
+***** conf.default/
 *** .xinitrc
 Optionally copied from [[* xinitrc][/etc/X11/xinitrc]]
 *** .xprofile
@@ -85,11 +99,29 @@ sudo mkdir -p $BACKUPPATH/root/etc
 sudo cp -r /etc/cups $BACKUPPATH/root/etc/
 #+end_src
 **** Backing up pacman
-#+begin_src sh
+#+begin_src sh :eval never :tangle backup.sh
 sudo cp /etc/pacman.conf $BACKUPPATH/root/etc/
 #+end_src
+**** Backing up oblogout
+#+begin_src sh :eval never :tangle backup.sh
+sudo cp /etc/oblogout.conf $BACKUPPATH/root/etc/
+#+end_src
 
+**** Backing up Font Configuration
+First we make the necessary backup path
+#+begin_src sh :eval never :tangle backup.sh
+sudo mkdir -p $BACKUPPATH/root/etc/fonts
+#+end_src
+Then we can copy over ~conf.avail/~ and our configuration file, ~fonts.conf~
+#+begin_src sh :eval never :tangle backup.sh
+sudo cp /etc/fonts/local.conf $BACKUPPATH/root/etc/fonts/
+sudo cp -r /etc/fonts/conf.avail $BACKUPPATH/root/etc/fonts/
+#+end_src
+Now we need to generate a list of the files in ~conf.d~ so that we can properly symlink them from ~/usr/share/fontconfig/conf.avail/~ during the restore. See this [[https://stackoverflow.com/questions/9011233/for-files-in-directory-only-echo-filename-no-path][stack overflow]] link for some insight into the options we have for scripting this. See [[* Restoring Font Configuration][Restoring Font Configuration]]
 
+#+begin_src sh :results fontconfig :tangle backup.sh
+find /etc/fonts/conf.d -name '*.conf' -printf "%f\n" > fontconfig-entries.txt
+#+end_src
 
 
 * Restoring
@@ -120,3 +152,12 @@ yay -Syu --needed - < aur-packages.txt
 # Local Variables:
 # eval: (flyspell-mode -1)
 # End:
+
+** Selectively Restore Root Folder
+*** Restoring Font Configuration
+Restore ~/etc/fonts/conf.d~ by making the appropriate symlinks from ~/usr/share/fontconfig/conf/avail~. See this [[https://superuser.com/questions/180251/copy-list-of-files][stack overflow]] post for options building the script.
+#+begin_src sh :tangle restore.sh
+for file in $(<fontconfig-entries.txt); do ln -s /usr/share/fontconfig/conf.avail/"$file" /etc/fonts/conf.d/; done
+#+end_src
+
+#+RESULTS:
