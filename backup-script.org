@@ -1,8 +1,11 @@
 #+title: Arch Backup/Restore Script
 * Filesystem Overview
-** bin -> usr/bin/
-** boot/
-** dev/
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+** TODO bin -> usr/bin/
+** TODO boot/
+** TODO dev/
 ** etc/
 *** profile
 Created during arch install and optionally copied to  [[* .xprofile][~/.xprofile]]
@@ -21,20 +24,20 @@ Xorg configuration files (for more info see [[https://www.x.org/releases/current
 Optionally copied from [[* xinitrc][/etc/X11/xinitrc]]
 *** .xprofile
 Optionally copied from [[* profile][/etc/profile]]
-** lib -> usr/lib/
-** lib64 -> usr/lib/
-** mnt/
-** opt/
-** proc/
-** root/
-** run/
-** sbin -> usr/bin/
-** .snapshots/
-** srv/
-** sys/
-** tmp/
-** usr/
-** var/
+** TODO lib -> usr/lib/
+** TODO lib64 -> usr/lib/
+** TODO mnt/
+** TODO opt/
+** TODO proc/
+** TODO root/
+** TODO run/
+** TODO sbin -> usr/bin/
+** TODO .snapshots/
+** TODO srv/
+** TODO sys/
+** TODO tmp/
+** TODO usr/
+** TODO var/
 * Backing Up
 ** Generate Package Lists
 *** List Explicitly Installed Packages from Pacman
