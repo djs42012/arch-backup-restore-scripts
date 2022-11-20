@@ -70,6 +70,16 @@ BACKUPPATH=$BACKUPDEST/$USER-backup/
 #+end_src
 
 ** Backup Home Folder
+#+begin_src sh :eval never :tangle backup.sh
+mkdir -p $BACKUPDEST$HOME
+rsync -aHv --progress --preallocate $HOME $BACKUPDEST/$USER-backup/home/
+#+end_src
+** Selectively Backup Root Directory
+*** etc/
+#+begin_src sh :eval never :tangle backup.sh
+sudo mkdir -p $BACKUPPATH/root/etc
+#+end_src
+
 **** Backing up cups
 #+begin_src sh :eval never :tangle backup.sh
 sudo cp -r /etc/cups $BACKUPPATH/root/etc/
