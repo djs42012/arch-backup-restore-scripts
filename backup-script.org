@@ -55,6 +55,14 @@ pacman -Qqem > aur-packages.txt
 
 #+RESULTS:
 [[file:aur-packages.txt]]
+** Create Backup Destination
+#+begin_src sh :eval never :tangle backup.sh
+read -p "Backup Destination: " BACKUPDEST
+BACKUPPATH=$BACKUPDEST/$USER-backup
+mkdir -p $BACKUPPATH$HOME
+BACKUPPATH=$BACKUPDEST/$USER-backup/
+#+end_src
+
 ** Backup Home Folder
 
 * Restoring
