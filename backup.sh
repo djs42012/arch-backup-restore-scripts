@@ -1,3 +1,3 @@
- pacman -Qqen
+pacman -Qqen
 
 pacman -Qqem
