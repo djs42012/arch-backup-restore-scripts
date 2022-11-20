@@ -4,7 +4,23 @@
 ** boot/
 ** dev/
 ** etc/
-** home/
+*** profile
+Created during arch install and optionally copied to  [[* .xprofile][~/.xprofile]]
+*** X11/
+**** xinit/
+***** xinitrc
+Created during arch install (awesomewm flavor) and optionally copied to [[* .xinitrc][~/.xinitrc]]
+**** xorg.conf.d/
+Xorg configuration files (for more info see [[https://www.x.org/releases/current/doc/man/man5/xorg.conf.5.xhtml][xorg docs]])
+***** 00-keyboard.conf
+***** 30-touchpad.conf
+*** oblogout.conf
++ TODO check if we can move this to ~/.config
+** ~/
+*** .xinitrc
+Optionally copied from [[* xinitrc][/etc/X11/xinitrc]]
+*** .xprofile
+Optionally copied from [[* profile][/etc/profile]]
 ** lib -> usr/lib/
 ** lib64 -> usr/lib/
 ** mnt/
