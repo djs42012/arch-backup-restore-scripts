@@ -42,7 +42,7 @@ Optionally copied from [[* profile][/etc/profile]]
 ** Generate Package Lists
 *** List Explicitly Installed Packages from Pacman
 #+begin_src sh :results packages file :file pacman-packages.txt :tangle backup.sh
-pacman -Qqen
+pacman -Qqen > pacman-packages.txt
 #+end_src
 
 #+RESULTS:
@@ -50,8 +50,7 @@ pacman -Qqen
 
 *** List Explicitly Installed AUR Packages
 #+begin_src sh :results aur-packages file :file aur-packages.txt :tangle backup.sh
-
-pacman -Qqem
+pacman -Qqem > aur-packages.txt
 #+end_src
 
 #+RESULTS:
