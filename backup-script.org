@@ -41,10 +41,35 @@ This contains our system wide font preferences, and can be overridden on a per u
 **** fontconfig/
 ***** conf.default/
 ** /home/$USER/
+*** systemd/
+**** user/
+Here we are manily after the service units we've created. Less so ones that have been placed here by pacman. See [[* Backing up systemd Units][Backing up systemd Units]]
+*** lightdm/
+**** lightdm.conf
+**** lightdm-gtk-greeter.conf
+**** slick-greeter.conf
 *** .xinitrc
 Optionally copied from [[* xinitrc][/etc/X11/xinitrc]]
 *** .xprofile
 Optionally copied from [[* profile][/etc/profile]]
+*** passwd
+Copy the single file. See [[* Backing up Groups][Backing up Groups]]
+*** group
+Copy the single file. See [[* Backing up Groups][Backing up Groups]]
+*** sudoers
+Only the single file. See [[* Backing up Sudoers][Backing up Sudoers Configuration]]
+*** share/
+**** fontconfig/
+***** conf.default/
+*** cache/
+**** pacman/
+***** pkg/
+We copy the entire directory of the pacman cache
+
+** PROG var/
+** PROG usr/
+** /home/$USER/
+For the purpose of the script we will be bulk copyting the entire home directory using ~rsync~, so we do not list out the contents of the directory here.
 ** ...rest
 *** TODO bin -> usr/bin/
 *** TODO boot/
@@ -78,7 +103,11 @@ pacman -Qqem > aur-packages.txt
 #+end_src
 
 #+RESULTS:
-
+** Copy pacman cache
+#+begin_src sh :eval never :tangle backup.sh
+sudo mkdir -p $BACKUPPATH/root/var/cache/pacman/
+sudo cp -r /var/cache/pacman/pkg/  $BACKUPPATH/root/var/cache/pacman/
+#+end_src
 ** Create Backup Destination
 #+begin_src sh :eval never :tangle backup.sh
 read -p "Backup Destination: " BACKUPDEST
@@ -99,7 +128,7 @@ sudo mkdir -p $BACKUPPATH/root/etc
 #+end_src
 **** Backing up cups
 #+begin_src sh :eval never :tangle backup.sh
-sudo cp -r /etc/cups $BACKUPPATH/root/etc/
+sudo cp -r /etc/cups/ $BACKUPPATH/root/etc/
 #+end_src
 **** Backing up pacman
 #+begin_src sh :eval never :tangle backup.sh
@@ -127,7 +156,31 @@ find /etc/fonts/conf.d -name '*.conf' -printf "%f\n" > fontconfig-entries.txt
 
 #+RESULTS:
 
-See [[* Restoring Font Configuration][Restoring Font Configuration]] for executing the restore.
+See [[* Restoring Font Configuration][Restoring Font Configuration]] for executing the restore      .
+**** Backing up lightm Configuration
+#+begin_src sh :eval never :tangle backup.sh
+sudo cp -r /etc/lightdm/ $BACKUPPATH/root/etc/
+#+end_src
+**** Backing up X11 Configuration
+Even though I'm mainly interested in the contents of ~/etc/X11/xorg.conf.d~, I am going to copy the entire ~X11~ directory to simply things and (maybe?) futureproof them.
+#+begin_src sh :eval never :tangle backup.sh
+sudo cp -r /etc/X11/ $BACKUPPATH/root/etc/
+#+end_src
+**** Backing up systemd Units
+#+begin_src sh :eval never :tabgle backup.sh
+find /etc/systemd/user/ -type f -regex '.*\.\(service\|timer\)$' -exec cp {} $BACKUPPATH/root/etc/systemd/user/ \;
+#+end_src
+**** Backing up Groups
+#+begin_src sh :eval never :tangle backup.sh
+sudo cp /etc/passwd $BACKUPPATH/root/etc/
+sudo cp /etc/group $BACKUPPATH/root/etc/
+#+end_src
+
+**** Backing up Sudoers
+#+begin_src sh :eval never :tangle backup.sh
+sudo cp /etc/sudoers $BACKUPPATH/root/etc/
+#+end_src
+
 * Restoring
 ** Restore Packages
 *** Install Pacman Packages
