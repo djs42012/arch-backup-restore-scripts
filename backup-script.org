@@ -158,22 +158,48 @@ sudo cp -r /etc/X11/ $BACKUPPATH/root/etc/
 #+end_src
 **** Backing up systemd Units
 #+begin_src sh :eval never :tabgle backup.sh
-find /etc/systemd/user/ -type f -regex '.*\.\(service\|timer\)$' -exec cp {} $BACKUPPATH/root/etc/systemd/user/ \;
+sudo mkdir -p $BACKUPPATH/root/etc/systemd/user
+sudo find /etc/systemd/user/ -type f -regex '.*\.\(service\|timer\)$' -exec cp {} $BACKUPPATH/root/etc/systemd/user/ \;
 #+end_src
 **** Backing up Groups
 #+begin_src sh :eval never :tangle backup.sh
 sudo cp /etc/passwd $BACKUPPATH/root/etc/
 sudo cp /etc/group $BACKUPPATH/root/etc/
 #+end_src
-
 **** Backing up Sudoers
 #+begin_src sh :eval never :tangle backup.sh
 sudo cp /etc/sudoers $BACKUPPATH/root/etc/
 #+end_src
-
+*** usr/
+**** share/
+#+begin_src sh :eval never :tangle backup.sh
+sudo mkdir -p $BACKUPPATH/root/usr
+sudo cp -r /usr/share/fonts /usr/share/icons /usr/share/themes/ /usr/share/pixmaps $BACKUPPATH/root/usr/
+#+end_src
+*** var/
+See [[* Copy pacman cache][Backing up pacman cache]]
 * Restoring
 ** TODO Clone Repo
+** Set Backup Destination
++ TODO Decide on whether to use ~$USER-backup~ or find some other way to identify target
+#+begin_src sh :eval never :tangle restore.sh
+read -p "Root path of backup (location of the folder \$USER-backup)?: " BACKUPLOC
+BACKUPPATH=$BACKUPLOC/$USER-backup
+#+end_src
 ** Restore Packages
+*** Install Yay
+Install ~yay~ using the command from the [[https://github.com/Jguer/yay][repository's homepage]]
+#+begin_src sh :tangle restore.sh :eval never
+sudo pacman -Syu --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si
+#+end_src
+*** Restore pacman.conf
+We need this in place before we can reinstall packages from nonstandard repositories, such as ~wine~ from ~multilib~
+#+begin_src sh :eval never tangle restore.sh
+sudo cp $BACKUPPATH/root/etc/pacman.conf /etc/
+#+end_src
+
+#+RESULTS:
+
 *** Install Pacman Packages
 #+begin_src sh :eval never :tangle restore.sh
 sudo pacman -Syu --needed - < pacman-packages.txt
@@ -181,21 +207,27 @@ sudo pacman -Syu --needed - < pacman-packages.txt
 
 #+RESULTS:
 
-*** Restore AUR Packages
-**** Install Yay
-Install ~yay~ using the command from the [[https://github.com/Jguer/yay][repository's homepage]]
-#+begin_src sh :tangle restore.sh :eval never
-sudo pacman -Syu --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si
-#+end_src
-
-#+RESULTS:
-
-**** Install Aur Packages
+*** Install Aur Packages
 #+begin_src sh :eval never :tangle restore.sh
 yay -Syu --needed - < aur-packages.txt
 #+end_src
-** TODO Restore Home Folder
-** PROG Selectively Restore Root Folder
+** Restore Home Folder
++ TODO Decide on whether to use ~.../home/$USER~ or ~.../home/*~
+#+begin_src sh :eval never :tangle restore.sh
+sudo rsync -avHAXSU --progress --preallocate $BACKUPPATH/home/$USER /home/
+#+end_src
+** Selectively Restore Root Folder
+*** TODO Consider switching to Rsync
+*** Restoring /etc
+This is a simple copy operation since we have everything we're after in one central location.
+#+begin_src sh :eval never :tangle restore.sh
+sudo cp -r $BACKUPPATH/root/etc /
+#+end_src
+*** Restoring /usr
+Just as we did for /etc...
+#+begin_src sh :eval never :tangle restore.sh
+sudo cp -r $BACKUPPATH/root/usr /
+#+end_src
 *** Restoring Font Configuration
 Restore ~/etc/fonts/conf.d~ by making the appropriate symlinks from ~/usr/share/fontconfig/conf/avail~. See this [[https://superuser.com/questions/180251/copy-list-of-files][stack overflow]] post for options building the script.
 #+begin_src sh :tangle restore.sh
@@ -204,15 +236,19 @@ for file in $(<fontconfig-entries.txt); do ln -s /usr/share/fontconfig/conf.avai
 
 #+RESULTS:
 
-
-
-
-
-
+** Enable systemd services
+*** User Services and Timers
+#+begin_src sh :eval never :tangle restore.sh
+find /etc/systemd/user/ -type f -regex '.*\.\(service\|timer\)$' -exec systemctl enable --user "{}" \;
+#+end_src
+*** NetworkManager.Service
+#+begin_src sh :eval never :tangle restore.sh
+sudo systemctl enable NetworkManager.service
+#+end_src
+*** lightdm.service
+#+begin_src sh :eval never :tangle restore.sh
+sudo systemctl enable lightdm.service
+#+end_src
 # Local Variables:
 # eval: (flyspell-mode -1)
 # End:
-** TODO Enable systemd services
-*** TODO User services/timers
-*** TODO NetworkManager.Service
-*** TODO lightdm.service
