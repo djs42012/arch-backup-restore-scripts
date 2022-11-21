@@ -3,20 +3,16 @@
 :PROPERTIES:
 :VISIBILITY: folded
 :END:
-** TODO Standardize linking presentation
+** TODO Complete/Standardize Links
 ** etc/
 *** profile
 Created during arch install and optionally copied to  [[* .xprofile][~/.xprofile]]
 *** X11/
 **** xinit/
 ***** xinitrc
-Created during arch install (awesomewm flavor) and optionally copied to [[* .xinitrc][~/.xinitrc]]
-***** xinitrc.d/ :ignore:
-Do nothing
-***** xerverrc   :ignore:
-Do nothing
+Created during arch install (awesomewm flavor) and optionally copied to [[* .xinitrc][~/.xinitrc]] (backup covered by [[* Backup Home Folder][Backing up Home Folder]])
 **** xorg.conf.d/
-Xorg configuration files (for more info see [[https://www.x.org/releases/current/doc/man/man5/xorg.conf.5.xhtml][xorg docs]])
+Xorg configuration files (for more info see [[https://www.x.org/releases/current/doc/man/man5/xorg.conf.5.xhtml][xorg docs]]). See [[* Backing up X11 Configuration][Backing up X11 Configuration]]
 ***** 00-keyboard.conf
 ***** 30-touchpad.conf
 *** oblogout.conf
@@ -36,11 +32,6 @@ Symlink the desired entries from ~/usr/share/fontconfig/conf.avail~
 We don't ever touch this file as it's automatically regenrated each time we run ~fc-cache -fv~
 **** local.conf
 This contains our system wide font preferences, and can be overridden on a per user basis by making corresponding file entries in ~$HOME/.config/fontconfig/conf.d/~ and in ~$HOME/.config/fontconfig/fonts.conf~. For more info, see the article on font configuration in the [[https://wiki.archlinux.org/title/font_configuration][arch wiki]]. Currently, I have no need for per user customizations.
-** usr/
-*** share/
-**** fontconfig/
-***** conf.default/
-** /home/$USER/
 *** systemd/
 **** user/
 Here we are manily after the service units we've created. Less so ones that have been placed here by pacman. See [[* Backing up systemd Units][Backing up systemd Units]]
@@ -86,9 +77,8 @@ For the purpose of the script we will be bulk copyting the entire home directory
 *** TODO srv/
 *** TODO sys/
 *** TODO tmp/
-*** TODO var/
-
 * Backing Up
+** TODO use org variables to store paths
 ** Generate Package Lists
 *** List Explicitly Installed Packages from Pacman
 #+begin_src sh :results packages :tangle backup.sh
@@ -182,6 +172,7 @@ sudo cp /etc/sudoers $BACKUPPATH/root/etc/
 #+end_src
 
 * Restoring
+** TODO Clone Repo
 ** Restore Packages
 *** Install Pacman Packages
 #+begin_src sh :eval never :tangle restore.sh
@@ -203,8 +194,8 @@ sudo pacman -Syu --needed git base-devel && git clone https://aur.archlinux.org/
 #+begin_src sh :eval never :tangle restore.sh
 yay -Syu --needed - < aur-packages.txt
 #+end_src
-** Restore Home Folder
-** Selectively Restore Root Folder
+** TODO Restore Home Folder
+** PROG Selectively Restore Root Folder
 *** Restoring Font Configuration
 Restore ~/etc/fonts/conf.d~ by making the appropriate symlinks from ~/usr/share/fontconfig/conf/avail~. See this [[https://superuser.com/questions/180251/copy-list-of-files][stack overflow]] post for options building the script.
 #+begin_src sh :tangle restore.sh
@@ -221,3 +212,7 @@ for file in $(<fontconfig-entries.txt); do ln -s /usr/share/fontconfig/conf.avai
 # Local Variables:
 # eval: (flyspell-mode -1)
 # End:
+** TODO Enable systemd services
+*** TODO User services/timers
+*** TODO NetworkManager.Service
+*** TODO lightdm.service
