@@ -15,8 +15,6 @@ nvm
 oauth2ms-git
 oauth2token
 oblogout-py3-git
-protonmail-bridge
-protonmail-import-export-app-bin
 python-grip
 rofi-file-browser-extended-git
 snapper-gui-git

@@ -116,6 +116,7 @@ tumbler
 unicode-emoji
 vim
 virtualbox
+virtualbox-guest-iso
 virtualbox-host-modules-arch
 vlc
 vulkan-radeon
