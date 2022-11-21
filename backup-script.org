@@ -49,39 +49,42 @@ Copy the single file. See [[* Backing up Groups][Backing up Groups]]
 Copy the single file. See [[* Backing up Groups][Backing up Groups]]
 *** sudoers
 Only the single file. See [[* Backing up Sudoers][Backing up Sudoers Configuration]]
-*** share/
-**** fontconfig/
-***** conf.default/
+** var/
 *** cache/
 **** pacman/
 ***** pkg/
-We copy the entire directory of the pacman cache
-
-** PROG var/
-** PROG usr/
+Copy contents of entire directory
+** usr/
+***  share/
+****  fonts/
+****  icons/
+****  themes/
+****  pixmaps/
+**** WAIT X11/
 ** /home/$USER/
 For the purpose of the script we will be bulk copyting the entire home directory using ~rsync~, so we do not list out the contents of the directory here.
-** ...rest
-*** TODO bin -> usr/bin/
-*** TODO boot/
-*** TODO dev/
-*** TODO lib -> usr/lib/
-*** TODO lib64 -> usr/lib/
-*** TODO mnt/
-*** TODO opt/
-*** TODO proc/
-*** TODO root/
-*** TODO run/
-*** TODO sbin -> usr/bin/
-*** TODO .snapshots/
-*** TODO srv/
-*** TODO sys/
-*** TODO tmp/
+** TODO ...rest
+***  bin -> usr/bin/
+***  boot/
+***  dev/
+***  lib -> usr/lib/
+***  lib64 -> usr/lib/
+***  mnt/
+***  opt/
+***  proc/
+***  root/
+***  run/
+***  sbin -> usr/bin/
+***  .snapshots/
+***  srv/
+***  sys/
+***  tmp/
 * Backing Up
-** TODO use org variables to store paths
+** TODO Use org variables to store paths
 ** Generate Package Lists
 *** List Explicitly Installed Packages from Pacman
 #+begin_src sh :results packages :tangle backup.sh
+#! /bin/bash
 pacman -Qqen > pacman-packages.txt
 #+end_src
 
@@ -93,23 +96,20 @@ pacman -Qqem > aur-packages.txt
 #+end_src
 
 #+RESULTS:
-** Copy pacman cache
-#+begin_src sh :eval never :tangle backup.sh
-sudo mkdir -p $BACKUPPATH/root/var/cache/pacman/
-sudo cp -r /var/cache/pacman/pkg/  $BACKUPPATH/root/var/cache/pacman/
-#+end_src
 ** Create Backup Destination
 #+begin_src sh :eval never :tangle backup.sh
 read -p "Backup Destination: " BACKUPDEST
 BACKUPPATH=$BACKUPDEST/$USER-backup
-mkdir -p $BACKUPPATH$HOME
-BACKUPPATH=$BACKUPDEST/$USER-backup/
 #+end_src
-
+** Copy pacman cache
+#+begin_src sh :eval never :tangle backup.sh
+sudo mkdir -p $BACKUPPATH/root/var/cache/pacman/
+sudo rsync -avHAXSU --progress --preallocate /var/cache/pacman/pkg  $BACKUPPATH/root/var/cache/pacman/
+#+end_src
 ** Backup Home Folder
 #+begin_src sh :eval never :tangle backup.sh
-mkdir -p $BACKUPDEST$HOME
-rsync -aHv --progress --preallocate $HOME $BACKUPDEST/$USER-backup/home/
+sudo mkdir -p $BACKUPPATH/home
+sudo rsync -avHAXSU --progress --preallocate $HOME $BACKUPPATH/home/
 #+end_src
 ** Selectively Backup Root Directory
 *** etc/
@@ -118,7 +118,7 @@ sudo mkdir -p $BACKUPPATH/root/etc
 #+end_src
 **** Backing up cups
 #+begin_src sh :eval never :tangle backup.sh
-sudo cp -r /etc/cups/ $BACKUPPATH/root/etc/
+sudo cp -r /etc/cups $BACKUPPATH/root/etc/
 #+end_src
 **** Backing up pacman
 #+begin_src sh :eval never :tangle backup.sh
@@ -130,7 +130,6 @@ sudo cp /etc/oblogout.conf $BACKUPPATH/root/etc/
 #+end_src
 **** Backing up Font Configuration
 First we make the necessary backup path
-+ TODO check vanilla install to determine if we need to create/alter contents of ~/conf.d~
 #+begin_src sh :eval never :tangle backup.sh
 sudo mkdir -p $BACKUPPATH/root/etc/fonts
 #+end_src
@@ -147,7 +146,7 @@ find /etc/fonts/conf.d -name '*.conf' -printf "%f\n" > fontconfig-entries.txt
 #+RESULTS:
 
 See [[* Restoring Font Configuration][Restoring Font Configuration]] for executing the restore      .
-**** Backing up lightm Configuration
+**** Backing up lightdm Configuration
 #+begin_src sh :eval never :tangle backup.sh
 sudo cp -r /etc/lightdm/ $BACKUPPATH/root/etc/
 #+end_src
@@ -179,7 +178,6 @@ sudo cp -r /usr/share/fonts /usr/share/icons /usr/share/themes/ /usr/share/pixma
 *** var/
 See [[* Copy pacman cache][Backing up pacman cache]]
 * Restoring
-** TODO Clone Repo
 ** Set Backup Destination
 + TODO Decide on whether to use ~$USER-backup~ or find some other way to identify target
 #+begin_src sh :eval never :tangle restore.sh
@@ -199,17 +197,22 @@ sudo cp $BACKUPPATH/root/etc/pacman.conf /etc/
 #+end_src
 
 #+RESULTS:
+*** Cleanup Problematic Files
+#+begin_src sh :eval never :tangle restore.sh
+sudo rm /etc/X11/xinit/xinitrd.c/40-libcanberra-gtk-module.sh
+#+end_src
 
+*** WAIT Restore pacman cache
 *** Install Pacman Packages
 #+begin_src sh :eval never :tangle restore.sh
-sudo pacman -Syu --needed - < pacman-packages.txt
+sudo pacman -Syu --needed --answerclean y --answerdiff n --answerupgrade y --noremovemake --cleanafter - < pacman-packages.txt
 #+end_src
 
 #+RESULTS:
 
 *** Install Aur Packages
 #+begin_src sh :eval never :tangle restore.sh
-yay -Syu --needed - < aur-packages.txt
+yay -Syu --needed --answerclean y --answerdiff n --answerupgrade y --noremovemake --cleanafter - < aur-packages.txt
 #+end_src
 ** Restore Home Folder
 + TODO Decide on whether to use ~.../home/$USER~ or ~.../home/*~
@@ -231,6 +234,7 @@ sudo cp -r $BACKUPPATH/root/usr /
 *** Restoring Font Configuration
 Restore ~/etc/fonts/conf.d~ by making the appropriate symlinks from ~/usr/share/fontconfig/conf/avail~. See this [[https://superuser.com/questions/180251/copy-list-of-files][stack overflow]] post for options building the script.
 #+begin_src sh :tangle restore.sh
+sudo rm /etc/fonts/conf.d/*
 for file in $(<fontconfig-entries.txt); do ln -s /usr/share/fontconfig/conf.avail/"$file" /etc/fonts/conf.d/; done
 #+end_src
 
