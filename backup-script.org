@@ -259,6 +259,11 @@ sudo systemctl enable NetworkManager.service
 #+begin_src sh :eval never :tangle restore.sh
 sudo systemctl enable lightdm.service
 #+end_src
+*** cups.service
+#+begin_src sh :eval never :tangle restore.sh
+sudo systemctl enable cups.service
+#+end_src
+
 # Local Variables:
 # eval: (flyspell-mode -1)
 # End:

@@ -29,3 +29,5 @@ find /etc/systemd/user/ -type f -regex '.*\.\(service\|timer\)$' -exec systemctl
 sudo systemctl enable NetworkManager.service
 
 sudo systemctl enable lightdm.service
+
+sudo systemctl enable cups.service
