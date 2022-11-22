@@ -36,5 +36,5 @@ sudo rsync -avHAXSU --progress /etc/gshadow $BACKUPPATH/root/etc/
 
 sudo rsync -avHAXSU --progress /etc/sudoers $BACKUPPATH/root/etc/
 
-sudo mkdir -p $BACKUPPATH/root/usr
-sudo rsync -avHAXSU --progress /usr/share/fonts /usr/share/icons /usr/share/themes /usr/share/pixmaps $BACKUPPATH/root/usr/
+sudo mkdir -p $BACKUPPATH/root/usr/share
+sudo rsync -avHAXSU --progress /usr/share/fonts /usr/share/icons /usr/share/themes /usr/share/pixmaps $BACKUPPATH/root/usr/share/

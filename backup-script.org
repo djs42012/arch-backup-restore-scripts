@@ -102,7 +102,6 @@ read -p "Backup Destination: " BACKUPDEST
 BACKUPPATH=$BACKUPDEST/$USER-backup
 #+end_src
 ** Copy pacman cache
-*** TODO Decide on whether to include
 #+begin_src sh :eval never
 sudo mkdir -p $BACKUPPATH/root/var/cache/pacman/
 sudo rsync -avHAXSU --progress /var/cache/pacman/pkg  $BACKUPPATH/root/var/cache/pacman/
@@ -170,21 +169,19 @@ sudo rsync -avHAXSU --progress /etc/shadow $BACKUPPATH/root/etc/
 sudo rsync -avHAXSU --progress /etc/gshadow $BACKUPPATH/root/etc/
 #+end_src
 **** Backing up Sudoers
-+ TODO figure out why this causes ~failed to open:...Operation not permitted(1)~
 #+begin_src sh :eval never :tangle backup.sh
 sudo rsync -avHAXSU --progress /etc/sudoers $BACKUPPATH/root/etc/
 #+end_src
 *** usr/
 **** share/
 #+begin_src sh :eval never :tangle backup.sh
-sudo mkdir -p $BACKUPPATH/root/usr
-sudo rsync -avHAXSU --progress /usr/share/fonts /usr/share/icons /usr/share/themes /usr/share/pixmaps $BACKUPPATH/root/usr/
+sudo mkdir -p $BACKUPPATH/root/usr/share
+sudo rsync -avHAXSU --progress /usr/share/fonts /usr/share/icons /usr/share/themes /usr/share/pixmaps $BACKUPPATH/root/usr/share/
 #+end_src
 *** var/
 See [[* Copy pacman cache][Backing up pacman cache]]
 * Restoring
 ** Set Backup Destination
-+ TODO Decide on whether to use ~$USER-backup~ or find some other way to identify target
 #+begin_src sh :eval never :tangle restore.sh
 read -p "Root path of backup (location of the folder \$USER-backup)?: " BACKUPLOC
 BACKUPPATH=$BACKUPLOC/$USER-backup
@@ -268,3 +265,18 @@ sudo systemctl enable cups.service
 # Local Variables:
 # eval: (flyspell-mode -1)
 # End:
+** Cleanup
+*** Syncthing
+#+begin_src sh :eval never :tangle restore.sh
+sudo rm ~/.config/syncthing/cert.pem
+sudo rm ~/.config/share/syncthing/key.pem
+#+end_src
+*** Install Starship
+#+begin_src sh :eval never :tangle restore.sh
+curl -sS https://sharship.rs/install.sh | sh
+#+end_src
+*** Fonts
+#+begin_src sh :eval never :tangle restore.sh
+sudo rm -r /usr/share/fonts/misc
+sudo rm -r /usr/share/gnu-free
+#+end_src

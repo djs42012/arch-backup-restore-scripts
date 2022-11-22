@@ -23,6 +23,7 @@ efibootmgr
 emacs-nativecomp
 fakeroot
 fd
+feh
 file
 file-roller
 findutils
@@ -37,6 +38,7 @@ gettext
 git
 gnome-keyring
 gnome-terminal
+gnu-free-fonts
 goimapnotify
 grep
 groff
@@ -50,7 +52,6 @@ ispell
 isync
 iwd
 kitty
-libpulse
 libretro-core-info
 libtool
 libva-mesa-driver
@@ -134,8 +135,10 @@ xf86-video-amdgpu
 xf86-video-ati
 xorg-font-util
 xorg-mkfontscale
+xorg-server
 xorg-xev
 xorg-xinit
 xorg-xinput
 xsel
+xterm
 zram-generator

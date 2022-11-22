@@ -31,3 +31,11 @@ sudo systemctl enable NetworkManager.service
 sudo systemctl enable lightdm.service
 
 sudo systemctl enable cups.service
+
+sudo rm ~/.config/syncthing/cert.pem
+sudo rm ~/.config/share/syncthing/key.pem
+
+curl -sS https://sharship.rs/install.sh | sh
+
+sudo rm -r /usr/share/fonts/misc
+sudo rm -r /usr/share/gnu-free

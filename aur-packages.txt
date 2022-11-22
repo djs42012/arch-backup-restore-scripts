@@ -18,11 +18,4 @@ oblogout-py3-git
 python-grip
 rofi-file-browser-extended-git
 snapper-gui-git
-spotify
-starship-git
-themix-full-git
-ttf-twemoji
-tty-clock-git
 yay
-zoom
-zotero-bin
