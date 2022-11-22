@@ -11,23 +11,26 @@ sudo rsync -avH --progress  $HOME $BACKUPPATH/home/
 
 sudo mkdir -p $BACKUPPATH/root/etc
 
-sudo cp /etc/pacman.conf $BACKUPPATH/root/etc/
+sudo rsync -avH --progress /etc/pacman.conf $BACKUPPATH/root/etc/
 
-sudo cp /etc/oblogout.conf $BACKUPPATH/root/etc/
+sudo rsync -avH --progress /etc/oblogout.conf $BACKUPPATH/root/etc/
 
 sudo mkdir -p $BACKUPPATH/root/etc/fonts
 
-sudo cp /etc/fonts/local.conf $BACKUPPATH/root/etc/fonts/
-sudo cp -r /etc/fonts/conf.avail $BACKUPPATH/root/etc/fonts/
+sudo rsync -avH --progress /etc/fonts/local.conf $BACKUPPATH/root/etc/fonts/
+sudo rsync -avH --progress /etc/fonts/conf.avail $BACKUPPATH/root/etc/fonts/
 
 find /etc/fonts/conf.d -name '*.conf' -printf "%f\n" > fontconfig-entries.txt
 
-sudo cp -r /etc/lightdm/ $BACKUPPATH/root/etc/
+sudo rsync -avH --progress /etc/lightdm $BACKUPPATH/root/etc/
 
-sudo cp -r /etc/X11/ $BACKUPPATH/root/etc/
+sudo rsync -avH --progress /etc/X11 $BACKUPPATH/root/etc/
 
-sudo cp /etc/passwd $BACKUPPATH/root/etc/
-sudo cp /etc/group $BACKUPPATH/root/etc/
+sudo mkdir -p $BACKUPPATH/root/etc/systemd/user
+sudo find /etc/systemd/user/ -type f -regex '.*\.\(service\|timer\)$' -exec sudo rsync -avH --progress {} $BACKUPPATH/root/etc/systemd/user/ \;
+
+sudo rsync -avH --progress /etc/passwd $BACKUPPATH/root/etc/
+sudo rsync -avH --progress /etc/group $BACKUPPATH/root/etc/
 
 sudo mkdir -p $BACKUPPATH/root/usr
-sudo cp -r /usr/share/fonts /usr/share/icons /usr/share/themes /usr/share/pixmaps $BACKUPPATH/root/usr/
+sudo rsync -avH --progress /usr/share/fonts /usr/share/icons /usr/share/themes /usr/share/pixmaps $BACKUPPATH/root/usr/

@@ -7,7 +7,7 @@ cd yay
 makepkg -si
 cd ..
 
-sudo cp $BACKUPPATH/root/etc/pacman.conf /etc/
+sudo rsync -avH --progress $BACKUPPATH/root/etc/pacman.conf /etc/
 
 sudo rm /etc/X11/xinit/xinitrc.d/40-libcanberra-gtk-module.sh
 
@@ -15,14 +15,14 @@ sudo pacman -Syu --needed - < pacman-packages.txt
 
 yay -Syu --needed - < aur-packages.txt
 
-sudo rsync -avH --progress --exclude .zoom --exclude .cache/yay/* --exclude local/share/Trash/* --$BACKUPPATH/home/$USER /home/
+sudo rsync -avH --progress --exclude .zoom --exclude .cache/yay/* --exclude .local/share/Trash/* --exclude Sync/Refs $BACKUPPATH/home/$USER /home/
 
-sudo cp -r $BACKUPPATH/root/etc /
+sudo rsync -avH --progress $BACKUPPATH/root/etc /
 
-sudo cp -r $BACKUPPATH/root/usr /
+sudo rsync -avH --progress $BACKUPPATH/root/usr /
 
 sudo rm /etc/fonts/conf.d/*
-for file in $(<fontconfig-entries.txt); do ln -s /usr/share/fontconfig/conf.avail/"$file" /etc/fonts/conf.d/; done
+for file in $(<fontconfig-entries.txt); do sudo ln -s /usr/share/fontconfig/conf.avail/"$file" /etc/fonts/conf.d/; done
 
 find /etc/systemd/user/ -type f -regex '.*\.\(service\|timer\)$' -exec systemctl enable --user "{}" \;
 
