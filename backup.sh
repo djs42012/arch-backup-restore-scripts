@@ -6,8 +6,8 @@ pacman -Qqem > aur-packages.txt
 read -p "Backup Destination: " BACKUPDEST
 BACKUPPATH=$BACKUPDEST/$USER-backup
 
-sudo mkdir -p $BACKUPPATH/root/var/cache/pacman/
-sudo rsync -avHAXSU --progress --preallocate /var/cache/pacman/pkg  $BACKUPPATH/root/var/cache/pacman/
+# sudo mkdir -p $BACKUPPATH/root/var/cache/pacman/
+# sudo rsync -avHAXSU --progress --preallocate /var/cache/pacman/pkg  $BACKUPPATH/root/var/cache/pacman/
 
 sudo mkdir -p $BACKUPPATH/home
 sudo rsync -avHAXSU --progress --preallocate $HOME $BACKUPPATH/home/

@@ -103,8 +103,8 @@ BACKUPPATH=$BACKUPDEST/$USER-backup
 #+end_src
 ** Copy pacman cache
 #+begin_src sh :eval never :tangle backup.sh
-sudo mkdir -p $BACKUPPATH/root/var/cache/pacman/
-sudo rsync -avHAXSU --progress --preallocate /var/cache/pacman/pkg  $BACKUPPATH/root/var/cache/pacman/
+# sudo mkdir -p $BACKUPPATH/root/var/cache/pacman/
+# sudo rsync -avHAXSU --progress --preallocate /var/cache/pacman/pkg  $BACKUPPATH/root/var/cache/pacman/
 #+end_src
 ** Backup Home Folder
 #+begin_src sh :eval never :tangle backup.sh
