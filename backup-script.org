@@ -102,6 +102,7 @@ read -p "Backup Destination: " BACKUPDEST
 BACKUPPATH=$BACKUPDEST/$USER-backup
 #+end_src
 ** Copy pacman cache
+*** TODO Decide on whether to include
 #+begin_src sh :eval never
 sudo mkdir -p $BACKUPPATH/root/var/cache/pacman/
 sudo rsync -avH --progress /var/cache/pacman/pkg  $BACKUPPATH/root/var/cache/pacman/
@@ -223,7 +224,7 @@ yay -Syu --needed - < aur-packages.txt
 ** Restore Home Folder
 + TODO Decide on whether to use ~.../home/$USER~ or ~.../home/*~
 #+begin_src sh :eval never :tangle restore.sh
-sudo rsync -avH --progress --exclude .zoom/data/avatar* $BACKUPPATH/home/$USER /home/
+sudo rsync -avH --progress --exclude .zoom --exclude .cache/yay/* --exclude local/share/Trash/* --$BACKUPPATH/home/$USER /home/
 #+end_src
 ** Selectively Restore Root Folder
 *** TODO Consider switching to Rsync

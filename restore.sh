@@ -15,7 +15,7 @@ sudo pacman -Syu --needed - < pacman-packages.txt
 
 yay -Syu --needed - < aur-packages.txt
 
-sudo rsync -avH --progress --exclude .zoom/data/avatar* $BACKUPPATH/home/$USER /home/
+sudo rsync -avH --progress --exclude .zoom --exclude .cache/yay/* --exclude local/share/Trash/* --$BACKUPPATH/home/$USER /home/
 
 sudo cp -r $BACKUPPATH/root/etc /
 
