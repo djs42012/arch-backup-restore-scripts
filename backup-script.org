@@ -104,12 +104,12 @@ BACKUPPATH=$BACKUPDEST/$USER-backup
 ** Copy pacman cache
 #+begin_src sh :eval never
 sudo mkdir -p $BACKUPPATH/root/var/cache/pacman/
-sudo rsync -avHAXSU --progress --preallocate /var/cache/pacman/pkg  $BACKUPPATH/root/var/cache/pacman/
+sudo rsync -avH --progress /var/cache/pacman/pkg  $BACKUPPATH/root/var/cache/pacman/
 #+end_src
 ** Backup Home Folder
 #+begin_src sh :eval never :tangle backup.sh
 sudo mkdir -p $BACKUPPATH/home
-sudo rsync -avHAXSU --progress --preallocate $HOME $BACKUPPATH/home/
+sudo rsync -avH --progress  $HOME $BACKUPPATH/home/
 #+end_src
 ** Selectively Backup Root Directory
 *** etc/
@@ -223,7 +223,7 @@ yay -Syu --needed - < aur-packages.txt
 ** Restore Home Folder
 + TODO Decide on whether to use ~.../home/$USER~ or ~.../home/*~
 #+begin_src sh :eval never :tangle restore.sh
-sudo rsync -avHAXSU --progress --preallocate $BACKUPPATH/home/$USER /home/
+sudo rsync -avH --progress --exclude .zoom/data/avatar* $BACKUPPATH/home/$USER /home/
 #+end_src
 ** Selectively Restore Root Folder
 *** TODO Consider switching to Rsync

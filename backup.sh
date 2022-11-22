@@ -7,7 +7,7 @@ read -p "Backup Destination: " BACKUPDEST
 BACKUPPATH=$BACKUPDEST/$USER-backup
 
 sudo mkdir -p $BACKUPPATH/home
-sudo rsync -avHAXSU --progress --preallocate $HOME $BACKUPPATH/home/
+sudo rsync -avH --progress  $HOME $BACKUPPATH/home/
 
 sudo mkdir -p $BACKUPPATH/root/etc
 
