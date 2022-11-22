@@ -102,9 +102,9 @@ read -p "Backup Destination: " BACKUPDEST
 BACKUPPATH=$BACKUPDEST/$USER-backup
 #+end_src
 ** Copy pacman cache
-#+begin_src sh :eval never :tangle backup.sh
-# sudo mkdir -p $BACKUPPATH/root/var/cache/pacman/
-# sudo rsync -avHAXSU --progress --preallocate /var/cache/pacman/pkg  $BACKUPPATH/root/var/cache/pacman/
+#+begin_src sh :eval never
+sudo mkdir -p $BACKUPPATH/root/var/cache/pacman/
+sudo rsync -avHAXSU --progress --preallocate /var/cache/pacman/pkg  $BACKUPPATH/root/var/cache/pacman/
 #+end_src
 ** Backup Home Folder
 #+begin_src sh :eval never :tangle backup.sh
@@ -117,7 +117,8 @@ sudo rsync -avHAXSU --progress --preallocate $HOME $BACKUPPATH/home/
 sudo mkdir -p $BACKUPPATH/root/etc
 #+end_src
 **** Backing up cups
-#+begin_src sh :eval never :tangle backup.sh
++ TODO figure out why this causes ~failed to open:...Operation not permitted(1)~
+#+begin_src sh :eval never
 sudo cp -r /etc/cups $BACKUPPATH/root/etc/
 #+end_src
 **** Backing up pacman
@@ -166,14 +167,15 @@ sudo cp /etc/passwd $BACKUPPATH/root/etc/
 sudo cp /etc/group $BACKUPPATH/root/etc/
 #+end_src
 **** Backing up Sudoers
-#+begin_src sh :eval never :tangle backup.sh
++ TODO figure out why this causes ~failed to open:...Operation not permitted(1)~
+#+begin_src sh :eval never
 sudo cp /etc/sudoers $BACKUPPATH/root/etc/
 #+end_src
 *** usr/
 **** share/
 #+begin_src sh :eval never :tangle backup.sh
 sudo mkdir -p $BACKUPPATH/root/usr
-sudo cp -r /usr/share/fonts /usr/share/icons /usr/share/themes/ /usr/share/pixmaps $BACKUPPATH/root/usr/
+sudo cp -r /usr/share/fonts /usr/share/icons /usr/share/themes /usr/share/pixmaps $BACKUPPATH/root/usr/
 #+end_src
 *** var/
 See [[* Copy pacman cache][Backing up pacman cache]]

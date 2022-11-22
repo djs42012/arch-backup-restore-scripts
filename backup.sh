@@ -6,15 +6,10 @@ pacman -Qqem > aur-packages.txt
 read -p "Backup Destination: " BACKUPDEST
 BACKUPPATH=$BACKUPDEST/$USER-backup
 
-# sudo mkdir -p $BACKUPPATH/root/var/cache/pacman/
-# sudo rsync -avHAXSU --progress --preallocate /var/cache/pacman/pkg  $BACKUPPATH/root/var/cache/pacman/
-
 sudo mkdir -p $BACKUPPATH/home
 sudo rsync -avHAXSU --progress --preallocate $HOME $BACKUPPATH/home/
 
 sudo mkdir -p $BACKUPPATH/root/etc
-
-sudo cp -r /etc/cups $BACKUPPATH/root/etc/
 
 sudo cp /etc/pacman.conf $BACKUPPATH/root/etc/
 
@@ -34,7 +29,5 @@ sudo cp -r /etc/X11/ $BACKUPPATH/root/etc/
 sudo cp /etc/passwd $BACKUPPATH/root/etc/
 sudo cp /etc/group $BACKUPPATH/root/etc/
 
-sudo cp /etc/sudoers $BACKUPPATH/root/etc/
-
 sudo mkdir -p $BACKUPPATH/root/usr
-sudo cp -r /usr/share/fonts /usr/share/icons /usr/share/themes/ /usr/share/pixmaps $BACKUPPATH/root/usr/
+sudo cp -r /usr/share/fonts /usr/share/icons /usr/share/themes /usr/share/pixmaps $BACKUPPATH/root/usr/
