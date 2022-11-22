@@ -7,7 +7,7 @@ cd yay
 makepkg -si
 cd ..
 
-sudo rsync -avH --progress $BACKUPPATH/root/etc/pacman.conf /etc/
+sudo cp -p $BACKUPPATH/root/etc/pacman.conf /etc/
 
 sudo rm /etc/X11/xinit/xinitrc.d/40-libcanberra-gtk-module.sh
 

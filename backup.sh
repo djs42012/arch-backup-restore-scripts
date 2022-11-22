@@ -29,7 +29,7 @@ sudo rsync -avH --progress /etc/X11 $BACKUPPATH/root/etc/
 sudo mkdir -p $BACKUPPATH/root/etc/systemd/user
 sudo find /etc/systemd/user/ -type f -regex '.*\.\(service\|timer\)$' -exec sudo rsync -avH --progress {} $BACKUPPATH/root/etc/systemd/user/ \;
 
-sudo rsync -avH --progress /etc/passwd $BACKUPPATH/root/etc/
+# sudo rsync -avH --progress /etc/passwd $BACKUPPATH/root/etc/
 sudo rsync -avH --progress /etc/group $BACKUPPATH/root/etc/
 
 sudo mkdir -p $BACKUPPATH/root/usr

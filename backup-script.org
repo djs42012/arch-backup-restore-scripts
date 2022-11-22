@@ -164,7 +164,7 @@ sudo find /etc/systemd/user/ -type f -regex '.*\.\(service\|timer\)$' -exec sudo
 #+end_src
 **** Backing up Groups
 #+begin_src sh :eval never :tangle backup.sh
-sudo rsync -avH --progress /etc/passwd $BACKUPPATH/root/etc/
+# sudo rsync -avH --progress /etc/passwd $BACKUPPATH/root/etc/
 sudo rsync -avH --progress /etc/group $BACKUPPATH/root/etc/
 #+end_src
 **** Backing up Sudoers
@@ -200,7 +200,7 @@ cd ..
 *** Restore pacman.conf
 We need this in place before we can reinstall packages from nonstandard repositories, such as ~wine~ from ~multilib~
 #+begin_src sh :eval never :tangle restore.sh
-sudo rsync -avH --progress $BACKUPPATH/root/etc/pacman.conf /etc/
+sudo cp -p $BACKUPPATH/root/etc/pacman.conf /etc/
 #+end_src
 
 #+RESULTS:
@@ -239,7 +239,7 @@ sudo rsync -avH --progress $BACKUPPATH/root/usr /
 #+end_src
 *** Restoring Font Configuration
 Restore ~/etc/fonts/conf.d~ by making the appropriate symlinks from ~/usr/share/fontconfig/conf/avail~. See this [[https://superuser.com/questions/180251/copy-list-of-files][stack overflow]] post for options building the script.
-#+begin_src sh :tangle restore.sh
+#+begin_src sh :eval never :tangle restore.sh
 sudo rm /etc/fonts/conf.d/*
 for file in $(<fontconfig-entries.txt); do sudo ln -s /usr/share/fontconfig/conf.avail/"$file" /etc/fonts/conf.d/; done
 #+end_src
