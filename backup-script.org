@@ -105,12 +105,12 @@ BACKUPPATH=$BACKUPDEST/$USER-backup
 *** TODO Decide on whether to include
 #+begin_src sh :eval never
 sudo mkdir -p $BACKUPPATH/root/var/cache/pacman/
-sudo rsync -avH --progress /var/cache/pacman/pkg  $BACKUPPATH/root/var/cache/pacman/
+sudo rsync -avHAXSU --progress /var/cache/pacman/pkg  $BACKUPPATH/root/var/cache/pacman/
 #+end_src
 ** Backup Home Folder
 #+begin_src sh :eval never :tangle backup.sh
 sudo mkdir -p $BACKUPPATH/home
-sudo rsync -avH --progress  $HOME $BACKUPPATH/home/
+sudo rsync -avHAXSU --progress  $HOME $BACKUPPATH/home/
 #+end_src
 ** Selectively Backup Root Directory
 *** etc/
@@ -124,11 +124,11 @@ sudo cp -r /etc/cups $BACKUPPATH/root/etc/
 #+end_src
 **** Backing up pacman
 #+begin_src sh :eval never :tangle backup.sh
-sudo rsync -avH --progress /etc/pacman.conf $BACKUPPATH/root/etc/
+sudo rsync -avHAXSU --progress /etc/pacman.conf $BACKUPPATH/root/etc/
 #+end_src
 **** Backing up oblogout
 #+begin_src sh :eval never :tangle backup.sh
-sudo rsync -avH --progress /etc/oblogout.conf $BACKUPPATH/root/etc/
+sudo rsync -avHAXSU --progress /etc/oblogout.conf $BACKUPPATH/root/etc/
 #+end_src
 **** Backing up Font Configuration
 First we make the necessary backup path
@@ -137,8 +137,8 @@ sudo mkdir -p $BACKUPPATH/root/etc/fonts
 #+end_src
 Then we can copy over ~conf.avail/~ and our configuration file, ~fonts.conf~
 #+begin_src sh :eval never :tangle backup.sh
-sudo rsync -avH --progress /etc/fonts/local.conf $BACKUPPATH/root/etc/fonts/
-sudo rsync -avH --progress /etc/fonts/conf.avail $BACKUPPATH/root/etc/fonts/
+sudo rsync -avHAXSU --progress /etc/fonts/local.conf $BACKUPPATH/root/etc/fonts/
+sudo rsync -avHAXSU --progress /etc/fonts/conf.avail $BACKUPPATH/root/etc/fonts/
 #+end_src
 Now we need to generate a list of the files in ~conf.d~ so that we can properly symlink them from ~/usr/share/fontconfig/conf.avail/~ during the restore. See this [[https://stackoverflow.com/questions/9011233/for-files-in-directory-only-echo-filename-no-path][stack overflow]] link for some insight into the options we have for scripting this.
 #+begin_src sh :results fontconfig :tangle backup.sh
@@ -150,33 +150,35 @@ find /etc/fonts/conf.d -name '*.conf' -printf "%f\n" > fontconfig-entries.txt
 See [[* Restoring Font Configuration][Restoring Font Configuration]] for executing the restore      .
 **** Backing up lightdm Configuration
 #+begin_src sh :eval never :tangle backup.sh
-sudo rsync -avH --progress /etc/lightdm $BACKUPPATH/root/etc/
+sudo rsync -avHAXSU --progress /etc/lightdm $BACKUPPATH/root/etc/
 #+end_src
 **** Backing up X11 Configuration
 Even though I'm mainly interested in the contents of ~/etc/X11/xorg.conf.d~, I am going to copy the entire ~X11~ directory to simply things and (maybe?) futureproof them.
 #+begin_src sh :eval never :tangle backup.sh
-sudo rsync -avH --progress /etc/X11 $BACKUPPATH/root/etc/
+sudo rsync -avHAXSU --progress /etc/X11 $BACKUPPATH/root/etc/
 #+end_src
 **** Backing up systemd Units
 #+begin_src sh :eval never :tangle backup.sh
 sudo mkdir -p $BACKUPPATH/root/etc/systemd/user
-sudo find /etc/systemd/user/ -type f -regex '.*\.\(service\|timer\)$' -exec sudo rsync -avH --progress {} $BACKUPPATH/root/etc/systemd/user/ \;
+sudo find /etc/systemd/user/ -type f -regex '.*\.\(service\|timer\)$' -exec sudo rsync -avHAXSU --progress {} $BACKUPPATH/root/etc/systemd/user/ \;
 #+end_src
 **** Backing up Groups
 #+begin_src sh :eval never :tangle backup.sh
-# sudo rsync -avH --progress /etc/passwd $BACKUPPATH/root/etc/
-sudo rsync -avH --progress /etc/group $BACKUPPATH/root/etc/
+sudo rsync -avHAXSU --progress /etc/passwd $BACKUPPATH/root/etc/
+sudo rsync -avHAXSU --progress /etc/group $BACKUPPATH/root/etc/
+sudo rsync -avHAXSU --progress /etc/shadow $BACKUPPATH/root/etc/
+sudo rsync -avHAXSU --progress /etc/gshadow $BACKUPPATH/root/etc/
 #+end_src
 **** Backing up Sudoers
 + TODO figure out why this causes ~failed to open:...Operation not permitted(1)~
-#+begin_src sh :eval never
-sudo cp /etc/sudoers $BACKUPPATH/root/etc/
+#+begin_src sh :eval never :tangle backup.sh
+sudo rsync -avHAXSU --progress /etc/sudoers $BACKUPPATH/root/etc/
 #+end_src
 *** usr/
 **** share/
 #+begin_src sh :eval never :tangle backup.sh
 sudo mkdir -p $BACKUPPATH/root/usr
-sudo rsync -avH --progress /usr/share/fonts /usr/share/icons /usr/share/themes /usr/share/pixmaps $BACKUPPATH/root/usr/
+sudo rsync -avHAXSU --progress /usr/share/fonts /usr/share/icons /usr/share/themes /usr/share/pixmaps $BACKUPPATH/root/usr/
 #+end_src
 *** var/
 See [[* Copy pacman cache][Backing up pacman cache]]
@@ -222,20 +224,19 @@ sudo pacman -Syu --needed - < pacman-packages.txt
 yay -Syu --needed - < aur-packages.txt
 #+end_src
 ** Restore Home Folder
-+ TODO Decide on whether to use ~.../home/$USER~ or ~.../home/*~
 #+begin_src sh :eval never :tangle restore.sh
-sudo rsync -avH --progress --exclude .zoom --exclude .cache/yay/* --exclude .local/share/Trash/* --exclude Sync/Refs $BACKUPPATH/home/$USER /home/
+sudo rsync -avHAXSU --progress --exclude .zoom --exclude .cache/yay/* --exclude .local/share/Trash/* --exclude Sync/Refs $BACKUPPATH/home/$USER /home/
 #+end_src
 ** Selectively Restore Root Folder
 *** Restoring /etc
 This is a simple copy operation since we have everything we're after in one central location.
 #+begin_src sh :eval never :tangle restore.sh
-sudo rsync -avH --progress $BACKUPPATH/root/etc /
+sudo rsync -avHAXSU --progress $BACKUPPATH/root/etc /
 #+end_src
 *** Restoring /usr
 Just as we did for /etc...
 #+begin_src sh :eval never :tangle restore.sh
-sudo rsync -avH --progress $BACKUPPATH/root/usr /
+sudo rsync -avHAXSU --progress $BACKUPPATH/root/usr /
 #+end_src
 *** Restoring Font Configuration
 Restore ~/etc/fonts/conf.d~ by making the appropriate symlinks from ~/usr/share/fontconfig/conf/avail~. See this [[https://superuser.com/questions/180251/copy-list-of-files][stack overflow]] post for options building the script.

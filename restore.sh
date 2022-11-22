@@ -15,11 +15,11 @@ sudo pacman -Syu --needed - < pacman-packages.txt
 
 yay -Syu --needed - < aur-packages.txt
 
-sudo rsync -avH --progress --exclude .zoom --exclude .cache/yay/* --exclude .local/share/Trash/* --exclude Sync/Refs $BACKUPPATH/home/$USER /home/
+sudo rsync -avHAXSU --progress --exclude .zoom --exclude .cache/yay/* --exclude .local/share/Trash/* --exclude Sync/Refs $BACKUPPATH/home/$USER /home/
 
-sudo rsync -avH --progress $BACKUPPATH/root/etc /
+sudo rsync -avHAXSU --progress $BACKUPPATH/root/etc /
 
-sudo rsync -avH --progress $BACKUPPATH/root/usr /
+sudo rsync -avHAXSU --progress $BACKUPPATH/root/usr /
 
 sudo rm /etc/fonts/conf.d/*
 for file in $(<fontconfig-entries.txt); do sudo ln -s /usr/share/fontconfig/conf.avail/"$file" /etc/fonts/conf.d/; done
