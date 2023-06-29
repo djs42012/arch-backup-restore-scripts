@@ -2,10 +2,11 @@ read -p "Root path of backup (location of the folder \$USER-backup)?: " BACKUPLO
 BACKUPPATH=$BACKUPLOC/$USER-backup
 
 sudo pacman -Syu --needed git base-devel
+cd ~
 git clone https://aur.archlinux.org/yay.git
 cd yay
 makepkg -si
-cd ..
+cd $BACKUPLOC
 
 sudo cp -p $BACKUPPATH/root/etc/pacman.conf /etc/
 
@@ -31,6 +32,12 @@ sudo systemctl enable NetworkManager.service
 sudo systemctl enable lightdm.service
 
 sudo systemctl enable cups.service
+
+sudo systemctl enable bluetooth.service
+
+sudo systemctl enable systemd-homed.service
+
+sudo systemctl enable sshd.service
 
 sudo rm ~/.config/syncthing/cert.pem
 sudo rm ~/.config/share/syncthing/key.pem

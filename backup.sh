@@ -7,7 +7,7 @@ read -p "Backup Destination: " BACKUPDEST
 BACKUPPATH=$BACKUPDEST/$USER-backup
 
 sudo mkdir -p $BACKUPPATH/home
-sudo rsync -avHAXSU --progress  $HOME $BACKUPPATH/home/
+sudo rsync -avHAXSU --progress --exclude Sync/Codesmith  $HOME $BACKUPPATH/home/
 
 sudo mkdir -p $BACKUPPATH/root/etc
 
@@ -35,6 +35,10 @@ sudo rsync -avHAXSU --progress /etc/shadow $BACKUPPATH/root/etc/
 sudo rsync -avHAXSU --progress /etc/gshadow $BACKUPPATH/root/etc/
 
 sudo rsync -avHAXSU --progress /etc/sudoers $BACKUPPATH/root/etc/
+
+sudo rsync -avHAXSU --progress /etc/samba $BACKUPPATH/root/etc/
+
+sudo rsync -avHAXSU --progress /etc/ssh $BACKUPPATH/root/etc/
 
 sudo mkdir -p $BACKUPPATH/root/usr/share
 sudo rsync -avHAXSU --progress /usr/share/fonts /usr/share/icons /usr/share/themes /usr/share/pixmaps $BACKUPPATH/root/usr/share/

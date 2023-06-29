@@ -87,14 +87,11 @@ For the purpose of the script we will be bulk copyting the entire home directory
 #! /bin/bash
 pacman -Qqen > pacman-packages.txt
 #+end_src
-
 #+RESULTS:
-
 *** List Explicitly Installed AUR Packages
 #+begin_src sh :results aur-packages :tangle backup.sh
 pacman -Qqem > aur-packages.txt
 #+end_src
-
 #+RESULTS:
 ** Create Backup Destination
 #+begin_src sh :eval never :tangle backup.sh
@@ -102,16 +99,16 @@ read -p "Backup Destination: " BACKUPDEST
 BACKUPPATH=$BACKUPDEST/$USER-backup
 #+end_src
 ** Copy pacman cache
-#+begin_src sh :eval never
-sudo mkdir -p $BACKUPPATH/root/var/cache/pacman/
-sudo rsync -avHAXSU --progress /var/cache/pacman/pkg  $BACKUPPATH/root/var/cache/pacman/
-#+end_src
+# #+begin_src sh :eval never
+# sudo mkdir -p $BACKUPPATH/root/var/cache/pacman/
+# sudo rsync -avHAXSU --progress /var/cache/pacman/pkg  $BACKUPPATH/root/var/cache/pacman/
+# #+end_src
 ** Backup Home Folder
 #+begin_src sh :eval never :tangle backup.sh
 sudo mkdir -p $BACKUPPATH/home
-sudo rsync -avHAXSU --progress  $HOME $BACKUPPATH/home/
+sudo rsync -avHAXSU --progress --exclude Sync/Codesmith --exclude .cache/yay/*  $HOME $BACKUPPATH/home/
 #+end_src
-** Selectively Backup Root Directory
+** TODO Selectively Backup Root Directory (pocket)
 *** etc/
 #+begin_src sh :eval never :tangle backup.sh
 sudo mkdir -p $BACKUPPATH/root/etc
@@ -119,7 +116,7 @@ sudo mkdir -p $BACKUPPATH/root/etc
 **** Backing up cups
 + TODO figure out why this causes ~failed to open:...Operation not permitted(1)~
 #+begin_src sh :eval never
-sudo cp -r /etc/cups $BACKUPPATH/root/etc/
+sudo rsync -avHAXSU --progress /etc/cups $BACKUPPATH/root/etc/
 #+end_src
 **** Backing up pacman
 #+begin_src sh :eval never :tangle backup.sh
@@ -143,9 +140,7 @@ Now we need to generate a list of the files in ~conf.d~ so that we can properly 
 #+begin_src sh :results fontconfig :tangle backup.sh
 find /etc/fonts/conf.d -name '*.conf' -printf "%f\n" > fontconfig-entries.txt
 #+end_src
-
 #+RESULTS:
-
 See [[* Restoring Font Configuration][Restoring Font Configuration]] for executing the restore      .
 **** Backing up lightdm Configuration
 #+begin_src sh :eval never :tangle backup.sh
@@ -156,7 +151,7 @@ Even though I'm mainly interested in the contents of ~/etc/X11/xorg.conf.d~, I a
 #+begin_src sh :eval never :tangle backup.sh
 sudo rsync -avHAXSU --progress /etc/X11 $BACKUPPATH/root/etc/
 #+end_src
-**** Backing up systemd Units
+**** TODO Backing up systemd Units (add samba)
 #+begin_src sh :eval never :tangle backup.sh
 sudo mkdir -p $BACKUPPATH/root/etc/systemd/user
 sudo find /etc/systemd/user/ -type f -regex '.*\.\(service\|timer\)$' -exec sudo rsync -avHAXSU --progress {} $BACKUPPATH/root/etc/systemd/user/ \;
@@ -172,8 +167,16 @@ sudo rsync -avHAXSU --progress /etc/gshadow $BACKUPPATH/root/etc/
 #+begin_src sh :eval never :tangle backup.sh
 sudo rsync -avHAXSU --progress /etc/sudoers $BACKUPPATH/root/etc/
 #+end_src
+**** Backing up Samba Configuration
+#+begin_src sh :eval never :tangle backup.sh
+sudo rsync -avHAXSU --progress /etc/samba $BACKUPPATH/root/etc/
+#+end_src
+**** Backing up SSH Configuration
+#+begin_src sh :eval never :tangle backup.sh
+sudo rsync -avHAXSU --progress /etc/ssh $BACKUPPATH/root/etc/
+#+end_src
 *** usr/
-**** share/
+**** TODO share/ (backup all?)
 #+begin_src sh :eval never :tangle backup.sh
 sudo mkdir -p $BACKUPPATH/root/usr/share
 sudo rsync -avHAXSU --progress /usr/share/fonts /usr/share/icons /usr/share/themes /usr/share/pixmaps $BACKUPPATH/root/usr/share/
@@ -181,6 +184,9 @@ sudo rsync -avHAXSU --progress /usr/share/fonts /usr/share/icons /usr/share/them
 *** var/
 See [[* Copy pacman cache][Backing up pacman cache]]
 * Restoring
+** TODO use rsync for backup on fonts / other /etc folders
+** TODO Reenable cups backup/restore
+** TODO Restore Permissions
 ** Set Backup Destination
 #+begin_src sh :eval never :tangle restore.sh
 read -p "Root path of backup (location of the folder \$USER-backup)?: " BACKUPLOC
@@ -191,31 +197,27 @@ BACKUPPATH=$BACKUPLOC/$USER-backup
 Install ~yay~ using the command from the [[https://github.com/Jguer/yay][repository's homepage]]
 #+begin_src sh :tangle restore.sh :eval never
 sudo pacman -Syu --needed git base-devel
+cd ~
 git clone https://aur.archlinux.org/yay.git
 cd yay
 makepkg -si
-cd ..
+cd $BACKUPLOC
 #+end_src
 *** Restore pacman.conf
 We need this in place before we can reinstall packages from nonstandard repositories, such as ~wine~ from ~multilib~
 #+begin_src sh :eval never :tangle restore.sh
-sudo cp -p $BACKUPPATH/root/etc/pacman.conf /etc/
+sudo rsync -avHAXSU --progress $BACKUPPATH/root/etc/pacman.conf /etc/
 #+end_src
-
 #+RESULTS:
 *** Cleanup Problematic Files
 #+begin_src sh :eval never :tangle restore.sh
 sudo rm /etc/X11/xinit/xinitrc.d/40-libcanberra-gtk-module.sh
 #+end_src
-
 *** WAIT Restore pacman cache
 *** Install Pacman Packages
 #+begin_src sh :eval never :tangle restore.sh
 sudo pacman -Syu --needed - < pacman-packages.txt
 #+end_src
-
-#+RESULTS:
-
 *** Install Aur Packages
 #+begin_src sh :eval never :tangle restore.sh
 yay -Syu --needed - < aur-packages.txt
@@ -224,7 +226,7 @@ yay -Syu --needed - < aur-packages.txt
 #+begin_src sh :eval never :tangle restore.sh
 sudo rsync -avHAXSU --progress --exclude .zoom --exclude .cache/yay/* --exclude .local/share/Trash/* --exclude Sync/Refs $BACKUPPATH/home/$USER /home/
 #+end_src
-** Selectively Restore Root Folder
+** TODO Selectively Restore Root Folder (pocket)
 *** Restoring /etc
 This is a simple copy operation since we have everything we're after in one central location.
 #+begin_src sh :eval never :tangle restore.sh
@@ -241,9 +243,6 @@ Restore ~/etc/fonts/conf.d~ by making the appropriate symlinks from ~/usr/share/
 sudo rm /etc/fonts/conf.d/*
 for file in $(<fontconfig-entries.txt); do sudo ln -s /usr/share/fontconfig/conf.avail/"$file" /etc/fonts/conf.d/; done
 #+end_src
-
-#+RESULTS:
-
 ** Enable systemd services
 *** User Services and Timers
 #+begin_src sh :eval never :tangle restore.sh
@@ -261,21 +260,33 @@ sudo systemctl enable lightdm.service
 #+begin_src sh :eval never :tangle restore.sh
 sudo systemctl enable cups.service
 #+end_src
-
 # Local Variables:
 # eval: (flyspell-mode -1)
 # End:
+*** bluetooth
+#+begin_src sh :eval never :tangle restore.sh
+sudo systemctl enable bluetooth.service
+#+end_src
+*** homed
+#+begin_src sh :eval never :tangle restore.sh
+sudo systemctl enable systemd-homed.service
+#+end_src
+*** ssh
+#+begin_src sh :eval never :tangle restore.sh
+sudo systemctl enable sshd.service
+#+end_src
 ** Cleanup
 *** Syncthing
 #+begin_src sh :eval never :tangle restore.sh
 sudo rm ~/.config/syncthing/cert.pem
 sudo rm ~/.config/share/syncthing/key.pem
 #+end_src
-*** Install Starship
+*** TODO Install Starship
 #+begin_src sh :eval never :tangle restore.sh
 curl -sS https://sharship.rs/install.sh | sh
 #+end_src
-*** Fonts
+*** TODO Fonts (Use Archive)
+Rsync --delete this
 #+begin_src sh :eval never :tangle restore.sh
 sudo rm -r /usr/share/fonts/misc
 sudo rm -r /usr/share/gnu-free
